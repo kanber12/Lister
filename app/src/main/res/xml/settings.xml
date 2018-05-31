@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/settings_general">
+
+        <android.support.v7.preference.ListPreference android:key="language"
+            android:title="@string/settings_language"
+            android:dialogTitle="@string/settings_language_dialog"
+            android:defaultValue="def"
+            android:entries="@array/langs_items"
+            android:entryValues="@array/langs_values" />
+
+        <by.kanber.lister.ThemePreference android:key="theme"
+            android:summary="@string/settings_theme"
+            android:defaultValue="0" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="@string/settings_notifications">
+
+        <android.support.v7.preference.CheckBoxPreference android:key="hidden"
+            android:title="@string/settings_hide_text"
+            android:defaultValue="false"
+            android:summaryOn="@string/settings_hide_text_on"
+            android:summaryOff="@string/settings_hide_text_off" />
+
+        <by.kanber.lister.RingtonePreference android:key="ring"
+            android:title="@string/settings_ringtone"
+            android:defaultValue="def_ring" />
+
+        <by.kanber.lister.VibrationPreference android:key="vibration"
+            android:defaultValue="0" />
+
+        <android.support.v7.preference.ListPreference android:key="led_color"
+            android:title="@string/settings_led"
+            android:defaultValue="led_blue"
+            android:entries="@array/led_items"
+            android:entryValues="@array/led_values" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_sort">Тип сортировки</string>
+    <string name="action_search">Поиск</string>
+    <string name="action_settings">Настройки</string>
+    <string name="add_note_title_hint">Название (21 символ)</string>
+    <string name="add_note_body_hint">Текст</string>
+    <string name="add_note">Добавление</string>
+    <string name="edit_note">Редактирование</string>
+    <string name="context_delete">Удалить</string>
+    <string name="context_edit">Редактировать</string>
+    <string name="context_pin">Закрепить</string>
+    <string name="answer_yes">Да</string>
+    <string name="answer_no">Нет</string>
+    <string name="set_reminder">Напоминание</string>
+    <string name="pin_to_top">Закрепить</string>
+    <string name="set_password">Пароль</string>
+    <string name="enter_password_hint">Пароль (15 символов)</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="repeat_password">Повторите пароль</string>
+    <string name="added_sign">Добавлено</string>
+    <string name="created_time">По времени создания</string>
+    <string name="created_time_reversed">По времени создания в обратном порядке</string>
+    <string name="alphabetically">По алфавиту</string>
+    <string name="alphabetically_reversed">По алфавиту в обратном порядке</string>
+    <string name="empty_search_text">Нет результатов</string>
+    <string name="save">Сохранить</string>
+    <string name="pin">Закрепить</string>
+    <string name="change">Изменить</string>
+    <string name="remove">Удалить</string>
+    <string name="info_edit">Редактировать</string>
+    <string name="info_delete">Удалить</string>
+    <string name="attach_picture">Прикрепить изображение</string>
+    <string name="file_not_found">Файл не найден</string>
+    <string name="search_hint">Поиск…</string>
+    <string name="empty_list_text">У вас ещё нет заметок!   Нажмите на \'+\' для добавления!</string>
+    <string name="set">Установить</string>
+    <string name="unpin">Открепить</string>
+    <string name="confirm">Пожалуйста, подтвердите</string>
+    <string name="cancel">Отмена</string>
+    <string name="successful_removing_picture">Картинка откреплена</string>
+    <string name="wrong_password">Неправильный пароль!</string>
+    <string name="enter">Ввод</string>
+    <string name="sort">Сортировать</string>
+    <string name="choose_sorting">Выберите тип сортировки</string>
+    <string name="yesterday">вчера</string>
+    <string name="tomorrow">завтра</string>
+    <string name="today">сегодня</string>
+    <string name="no_text"><i>Нет текста</i></string>
+    <string name="text_hidden"><i>Текст скрыт</i></string>
+    <string name="at">в</string>
+    <string name="key_added">Добавлено</string>
+    <string name="warning">Внимание</string>
+    <string name="get_it">Понятно</string>
+    <string name="back">Назад</string>
+    <string name="next">Вперёд</string>
+    <string name="theme">Цветовая схема</string>
+    <string name="choose_theme_text">Выберите цветовую схему</string>
+    <string name="enter_title_warning">Пожалуйста, введите название</string>
+    <string name="choose_from_gallery">Выбрать из галереи</string>
+    <string name="take_photo">Сделать фото</string>
+    <string name="picture_replacing_text">Изображение будет заменено. Продолжить?</string>
+    <string name="settings_general">Общие</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_language_dialog">Язык приложения</string>
+    <string name="settings_theme">Цветовая схема приложения</string>
+    <string name="settings_notifications">Уведомление</string>
+    <string name="settings_hide_text">Скрывать текст заметки</string>
+    <string name="settings_hide_text_on">Текст всегда скрыт</string>
+    <string name="settings_hide_text_off">Текст скрыт только при установленном пароле</string>
+    <string name="settings_ringtone">Рингтон</string>
+    <string name="settings_vibration">Вибрация</string>
+    <string name="settings_led">Световой индикатор</string>
+    <string name="successful_deleting_note">Заметка удалена</string>
+    <string name="successful_adding">Заметка добавлена</string>
+    <string name="successful_editing">Заметка отредактированна</string>
+    <string name="remove_picture_text">Вы дейсвтительно хотите открепить картинку? Это действие нельзя отменить.</string>
+    <string name="delete_note_text">Вы действительно хотите удалить заметку? Это действие нельзя отменить.</string>
+    <string name="key_reminder_set_to">Напоминание установлено на:</string>
+    <string name="successful_attaching_picture">Картинка прикрепленна к заметке</string>
+    <string name="picture_not_selected">Картинка не выбрана</string>
+    <string name="successful_attaching_photo">Фото прикрепленно к заметке</string>
+    <string name="photo_not_selected">Фото не сделано</string>
+    <string name="removing_reminder_text">Вы действительно хотите убрать напоминание? Это действие нельзя отменить.</string>
+    <string name="reminder_set_to_past_warning">Неправильное время напоминания</string>
+    <string name="save_text">Вы действительно хотите сохранить изменения?</string>
+    <string name="reminder_out">Время напоминания вышло. Пожалуйста, измените время или уберите напоминание</string>
+    <string name="passwords_do_not_match_warning">Пароли не совпадают</string>
+    <string name="password_short_warning">Длина пароля должна быть как минимум 5 символов</string>
+    <string name="enter_password_warning">Пажалуйста, введите пароль</string>
+    <string name="not_correct_password_warning">Пароль должен содержать только буквы и цифры</string>
+    <string name="removing_password_text">Вы действительно хотите убрать пароль? Это действие нельзя отменить.</string>
+    <string name="discarding_text">Вы действительно хотите закрыть окно? Все изменения будут сброшены.</string>
+    <string name="note_without_text">У заметки отсутствует текст. Пароль не будет сохранен.</string>
+    <string name="select_ringtone">Выберите мелодию уведомления</string>
+
+    <string-array name="langs_items">
+        <item>Системный</item>
+        <item>English</item>
+        <item>Русский</item>
+    </string-array>
+
+    <string-array name="langs_values">
+        <item>def</item>
+        <item>en</item>
+        <item>ru</item>
+    </string-array>
+
+    <string-array name="led_items">
+        <item>Синий</item>
+        <item>Жёлтый</item>
+        <item>Фиолетовый</item>
+        <item>Розовый</item>
+        <item>Белый</item>
+    </string-array>
+
+    <string-array name="led_values">
+        <item>led_blue</item>
+        <item>led_yellow</item>
+        <item>led_purple</item>
+        <item>led_pink</item>
+        <item>led_white</item>
+    </string-array>
+</resources>
