@@ -1,26 +1,27 @@
 package by.kanber.lister;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> {
+public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> implements NoteTouchHelperAdapter {
     private Context context;
     private OnButtonClickListener buttonListener;
     private OnItemClickListener clickListener;
-    private OnItemLongClickListener longClickListener;
+    private OnOptionsClickListener optionsClickListener;
+    private OnMoveCompleteListener moveCompleteListener;
     private ArrayList<Note> notes;
 
     public void setOnItemClickListener(OnItemClickListener listener)
@@ -28,51 +29,67 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         clickListener = listener;
     }
 
-    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
-        longClickListener = listener;
+    public void setOnButtonClickListener(OnButtonClickListener listener) {
+        buttonListener = listener;
+    }
+
+    public void setOnOptionsClickListener(OnOptionsClickListener listener) {
+        optionsClickListener = listener;
+    }
+
+    public void setOnMoveCompleteListener(OnMoveCompleteListener listener) {
+        moveCompleteListener = listener;
     }
 
     public static class NoteViewHolder extends RecyclerView.ViewHolder {
         public CardView cardView;
-        public FrameLayout pinMark;
         public TextView titleTextView, timeTextView, reminderTextView;
-        public ImageView passwordIcon, reminderButton;
+        public ImageView passwordIcon, reminderButton, noteOptions;
 
-        public NoteViewHolder(View itemView, final OnItemClickListener click, final OnItemLongClickListener longClick) {
+        public NoteViewHolder(View itemView, final OnItemClickListener itemClickListener, final OnButtonClickListener buttonClickListener, final OnOptionsClickListener optionsClickListener) {
             super(itemView);
 
-            final TextView anchor = itemView.findViewById(R.id.anchor);
             cardView = itemView.findViewById(R.id.card_view);
-            pinMark = itemView.findViewById(R.id.pinMark);
-            titleTextView = itemView.findViewById(R.id.titleTextView);
-            timeTextView = itemView.findViewById(R.id.timeTextView);
-            reminderTextView = itemView.findViewById(R.id.reminderTextView);
-            passwordIcon = itemView.findViewById(R.id.passwordIcon);
+            titleTextView = itemView.findViewById(R.id.title_text_view);
+            timeTextView = itemView.findViewById(R.id.time_text_view);
+            reminderTextView = itemView.findViewById(R.id.reminder_text_view);
+            passwordIcon = itemView.findViewById(R.id.password_icon);
             reminderButton = itemView.findViewById(R.id.reminder_button);
+            noteOptions = itemView.findViewById(R.id.note_options);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (click != null) {
+                    if (itemClickListener != null) {
                         int position = getAdapterPosition();
 
                         if (position != RecyclerView.NO_POSITION)
-                            click.onItemClick(position);
+                            itemClickListener.onItemClick(position);
                     }
                 }
             });
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            reminderButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
-                    if (longClick != null) {
+                public void onClick(View v) {
+                    if (buttonClickListener != null) {
                         int position = getAdapterPosition();
 
                         if (position != RecyclerView.NO_POSITION)
-                            longClick.onItemLongClick(position, anchor);
+                            buttonClickListener.onButtonClick(position);
                     }
+                }
+            });
 
-                    return true;
+            noteOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (optionsClickListener != null) {
+                        int position = getAdapterPosition();
+
+                        if (position != RecyclerView.NO_POSITION)
+                            optionsClickListener.onOptionsClick(position, noteOptions);
+                    }
                 }
             });
         }
@@ -81,19 +98,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     public NotesAdapter(Context context, ArrayList<Note> notes) {
         this.context = context;
         this.notes = notes;
-        Fragment fragment = ((MainActivity) context).getSupportFragmentManager().findFragmentByTag("notesListFragment");
-        this.buttonListener = (OnButtonClickListener) fragment;
     }
 
+    @NonNull
     @Override
-    public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.note_list_item, parent, false);
 
-        return new NoteViewHolder(view, clickListener, longClickListener);
+        return new NoteViewHolder(view, clickListener, buttonListener, optionsClickListener);
     }
 
     @Override
-    public void onBindViewHolder(final NoteViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NoteViewHolder holder, int position) {
         Note note = notes.get(position);
 
         if (note.isShow()) {
@@ -104,11 +120,14 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             holder.timeTextView.setTextColor(Utils.getColor(context, R.attr.colorNoteTimeText));
 
             if (note.isReminderSet()) {
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_action_set_time_true);
-                drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
-                holder.reminderButton.setImageDrawable(drawable);
+                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_action_reminder);
+
+                if (drawable != null) {
+                    drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
+                    holder.reminderButton.setImageDrawable(drawable);
+                }
             } else
-                holder.reminderButton.setImageResource(R.drawable.ic_action_set_time_false);
+                holder.reminderButton.setImageResource(R.drawable.ic_action_reminder);
 
             if (note.getNotificationTime() != 0)
                 holder.reminderTextView.setText(Utils.viewableTime(context, note.getNotificationTime(), Utils.KEY_NONE));
@@ -116,25 +135,24 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 holder.reminderTextView.setText("");
 
             if (note.isPasswordSet()) {
+                holder.passwordIcon.setVisibility(View.VISIBLE);
                 Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_has_password);
-                drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
-                holder.passwordIcon.setImageDrawable(drawable);
-            } else
-                holder.passwordIcon.setImageResource(android.R.color.transparent);
 
-            if (note.isPinned()) {
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.pinned_note_mask);
-                drawable.setColorFilter(Utils.getColor(context, R.attr.colorPinnedNote), PorterDuff.Mode.MULTIPLY);
-                holder.pinMark.setBackgroundDrawable(drawable);
-            } else
-                holder.pinMark.setBackgroundResource(android.R.color.transparent);
-
-            holder.reminderButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    buttonListener.onButtonClick(holder.getAdapterPosition());
+                if (drawable != null) {
+                    drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
+                    holder.passwordIcon.setImageDrawable(drawable);
                 }
-            });
+            } else {
+                holder.passwordIcon.setImageResource(android.R.color.transparent);
+                holder.passwordIcon.setVisibility(View.GONE);
+            }
+
+            Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_options);
+
+            if (drawable != null) {
+                drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
+                holder.noteOptions.setImageDrawable(drawable);
+            }
         } else
             holder.cardView.setVisibility(View.GONE);
     }
@@ -142,6 +160,21 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     @Override
     public int getItemCount() {
         return notes.size();
+    }
+
+    @Override
+    public boolean onNoteMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition)
+            for (int i = fromPosition; i < toPosition; i++)
+                Collections.swap(notes, i, i + 1);
+        else
+            for (int i = fromPosition; i > toPosition; i--)
+                Collections.swap(notes, i, i - 1);
+
+        moveCompleteListener.onMoveComplete();
+        notifyItemMoved(fromPosition, toPosition);
+
+        return true;
     }
 
     public interface OnButtonClickListener {
@@ -152,7 +185,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         void onItemClick(int position);
     }
 
-    public interface OnItemLongClickListener {
-        void onItemLongClick(int position, View view);
+    public interface OnOptionsClickListener {
+        void onOptionsClick(int position, View view);
+    }
+
+    public interface OnMoveCompleteListener {
+        void onMoveComplete();
     }
 }

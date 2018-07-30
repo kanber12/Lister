@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="action_sort">Тип сортировки</string>
     <string name="action_search">Поиск</string>
     <string name="action_settings">Настройки</string>
     <string name="add_note_title_hint">Название (21 символ)</string>
@@ -9,23 +8,16 @@
     <string name="edit_note">Редактирование</string>
     <string name="context_delete">Удалить</string>
     <string name="context_edit">Редактировать</string>
-    <string name="context_pin">Закрепить</string>
     <string name="answer_yes">Да</string>
     <string name="answer_no">Нет</string>
     <string name="set_reminder">Напоминание</string>
-    <string name="pin_to_top">Закрепить</string>
     <string name="set_password">Пароль</string>
-    <string name="enter_password_hint">Пароль (15 символов)</string>
+    <string name="enter_password_hint">Пароль (минимум 5 символов)</string>
     <string name="enter_password">Введите пароль</string>
     <string name="repeat_password">Повторите пароль</string>
     <string name="added_sign">Добавлено</string>
-    <string name="created_time">По времени создания</string>
-    <string name="created_time_reversed">По времени создания в обратном порядке</string>
-    <string name="alphabetically">По алфавиту</string>
-    <string name="alphabetically_reversed">По алфавиту в обратном порядке</string>
     <string name="empty_search_text">Нет результатов</string>
     <string name="save">Сохранить</string>
-    <string name="pin">Закрепить</string>
     <string name="change">Изменить</string>
     <string name="remove">Удалить</string>
     <string name="info_edit">Редактировать</string>
@@ -35,13 +27,11 @@
     <string name="search_hint">Поиск…</string>
     <string name="empty_list_text">У вас ещё нет заметок!   Нажмите на \'+\' для добавления!</string>
     <string name="set">Установить</string>
-    <string name="unpin">Открепить</string>
     <string name="confirm">Пожалуйста, подтвердите</string>
     <string name="cancel">Отмена</string>
     <string name="successful_removing_picture">Картинка откреплена</string>
     <string name="wrong_password">Неправильный пароль!</string>
     <string name="enter">Ввод</string>
-    <string name="sort">Сортировать</string>
     <string name="choose_sorting">Выберите тип сортировки</string>
     <string name="yesterday">вчера</string>
     <string name="tomorrow">завтра</string>
@@ -51,7 +41,7 @@
     <string name="at">в</string>
     <string name="key_added">Добавлено</string>
     <string name="warning">Внимание</string>
-    <string name="get_it">Понятно</string>
+    <string name="got_it">Понятно</string>
     <string name="back">Назад</string>
     <string name="next">Вперёд</string>
     <string name="theme">Цветовая схема</string>
@@ -76,7 +66,7 @@
     <string name="successful_editing">Заметка отредактированна</string>
     <string name="remove_picture_text">Вы дейсвтительно хотите открепить картинку? Это действие нельзя отменить.</string>
     <string name="delete_note_text">Вы действительно хотите удалить заметку? Это действие нельзя отменить.</string>
-    <string name="key_reminder_set_to">Напоминание установлено на:</string>
+    <string name="key_reminder_set_to">"Напоминание установлено на "</string>
     <string name="successful_attaching_picture">Картинка прикрепленна к заметке</string>
     <string name="picture_not_selected">Картинка не выбрана</string>
     <string name="successful_attaching_photo">Фото прикрепленно к заметке</string>
@@ -84,7 +74,7 @@
     <string name="removing_reminder_text">Вы действительно хотите убрать напоминание? Это действие нельзя отменить.</string>
     <string name="reminder_set_to_past_warning">Неправильное время напоминания</string>
     <string name="save_text">Вы действительно хотите сохранить изменения?</string>
-    <string name="reminder_out">Время напоминания вышло. Пожалуйста, измените время или уберите напоминание</string>
+    <string name="reminder_out">Время напоминания вышло. Напоминание не будет установленно</string>
     <string name="passwords_do_not_match_warning">Пароли не совпадают</string>
     <string name="password_short_warning">Длина пароля должна быть как минимум 5 символов</string>
     <string name="enter_password_warning">Пажалуйста, введите пароль</string>
@@ -93,6 +83,12 @@
     <string name="discarding_text">Вы действительно хотите закрыть окно? Все изменения будут сброшены.</string>
     <string name="note_without_text">У заметки отсутствует текст. Пароль не будет сохранен.</string>
     <string name="select_ringtone">Выберите мелодию уведомления</string>
+    <string name="vibration_1">Вибрация 1</string>
+    <string name="vibration_2">Вибрация 2</string>
+    <string name="vibration_3">Вибрация 3</string>
+    <string name="vibration_4">Вибрация 4</string>
+    <string name="vibration_5">Вибрация 5</string>
+    <string name="password">Пароль</string>
 
     <string-array name="langs_items">
         <item>Системный</item>

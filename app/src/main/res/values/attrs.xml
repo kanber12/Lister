@@ -3,6 +3,5 @@
     <attr name="colorNoteCard" format="reference" />
     <attr name="colorNoteTitleText" format="reference" />
     <attr name="colorNoteTimeText" format="reference" />
-    <attr name="colorPinnedNote" format="reference" />
     <attr name="colorReminderON" format="reference" />
 </resources>

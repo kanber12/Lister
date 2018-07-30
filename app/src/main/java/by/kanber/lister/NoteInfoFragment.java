@@ -1,6 +1,7 @@
 package by.kanber.lister;
 
 import android.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,9 +36,11 @@ public class NoteInfoFragment extends Fragment {
     public static final int MODE_CLOSE = 1;
 
     private OnFragmentInteractionListener mListener;
+    private FrameLayout noteInfoImageFrame;
     private TextView notFoundTextView;
     private ImageView infoPictureView;
     private ProgressBar progressBar;
+    private MainActivity activity;
 
     private Note note;
 
@@ -54,6 +58,8 @@ public class NoteInfoFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (MainActivity) getActivity();
+
         if (getArguments() != null)
             note = getArguments().getParcelable("note");
 
@@ -61,16 +67,17 @@ public class NoteInfoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_note_info, container, false);
 
         Toolbar toolbar = view.findViewById(R.id.toolbar_actionbar);
         TextView bodyTextView = view.findViewById(R.id.bodyTextView);
+        noteInfoImageFrame = view.findViewById(R.id.noteInfoImageFrame);
         notFoundTextView = view.findViewById(R.id.notFoundText);
         infoPictureView = view.findViewById(R.id.infoPictureView);
         progressBar = view.findViewById(R.id.imageLoadingProgressBar);
 
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        activity.setSupportActionBar(toolbar);
         toolbar.setTitle(note.getTitle());
         toolbar.setNavigationIcon(R.drawable.ic_navigation_arrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -112,9 +119,11 @@ public class NoteInfoFragment extends Fragment {
     }
 
     private void loadPicture() {
+        long key = System.currentTimeMillis();
         progressBar.setVisibility(View.VISIBLE);
-        Glide.with(getActivity()).load(Uri.parse(note.getPicture()))
-                .apply(new RequestOptions().error(R.drawable.ic_warning).signature(new ObjectKey(System.currentTimeMillis())))
+        noteInfoImageFrame.setVisibility(View.VISIBLE);
+        Glide.with(activity).load(Uri.parse(note.getPicture()))
+                .apply(new RequestOptions().error(R.drawable.ic_warning).signature(new ObjectKey(key)))
                 .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -133,12 +142,12 @@ public class NoteInfoFragment extends Fragment {
     }
 
     private void closeFragment() {
-        getActivity().getSupportFragmentManager().popBackStack();
-        getActivity().getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(NoteInfoFragment.this).commit();
+        activity.getSupportFragmentManager().popBackStack();
+        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(NoteInfoFragment.this).commit();
     }
 
     private void delete() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.delete_note_text))
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -159,8 +168,8 @@ public class NoteInfoFragment extends Fragment {
     }
 
     private void edit() {
-        FragmentTransaction fTrans = getActivity().getSupportFragmentManager().beginTransaction();
-        EditNoteFragment fragment = EditNoteFragment.newInstance(note, EditNoteFragment.FROM_INFO);
+        FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
+        EditNoteFragment fragment = EditNoteFragment.newInstance(EditNoteFragment.ACTION_EDIT, note, EditNoteFragment.FROM_INFO);
         fTrans.replace(R.id.container, fragment, "editNoteFragment").addToBackStack("tag");
         fTrans.commit();
     }

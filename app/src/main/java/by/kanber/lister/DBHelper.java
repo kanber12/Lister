@@ -6,11 +6,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "noteDB";
     public static final String TABLE_NAME = "notes";
 
     public static final String KEY_ID = "_id";
+    public static final String KEY_INDEX = "note_index";
     public static final String KEY_TITLE = "note_title";
     public static final String KEY_BODY = "note_body";
     public static final String KEY_PASSWORD = "note_password";
@@ -19,8 +20,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String KEY_NOTIF_TIME = "note_notif_time";
     public static final String KEY_REMINDER_SET = "note_is_reminder";
     public static final String KEY_PASSWORD_SET = "note_is_password";
-    public static final String KEY_PINNED_SET = "note_is_pinned";
-    public static final String KEY_IS_SHOW = "note_is_show";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,8 +27,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + "(" + KEY_ID + " integer primary key autoincrement, " + KEY_TITLE + " text, " + KEY_BODY + " text, " + KEY_PASSWORD + " text, " + KEY_PICTURE + " text, "
-                + KEY_ADD_TIME + " integer, " + KEY_NOTIF_TIME + " integer, " + KEY_REMINDER_SET + " integer, " + KEY_PASSWORD_SET + " integer, " + KEY_PINNED_SET + " integer, " + KEY_IS_SHOW + " integer" + ")");
+        db.execSQL("create table " + TABLE_NAME + "(" + KEY_ID + " integer primary key autoincrement, " + KEY_INDEX + " integer," + KEY_TITLE + " text, " + KEY_BODY + " text, " + KEY_PASSWORD + " text, "
+                + KEY_PICTURE + " text, " + KEY_ADD_TIME + " integer, " + KEY_NOTIF_TIME + " integer, " + KEY_REMINDER_SET + " integer, " + KEY_PASSWORD_SET + " integer" + ")");
     }
 
     @Override

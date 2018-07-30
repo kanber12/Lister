@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -14,18 +13,17 @@ public class Note implements Parcelable
 {
     private String title, body, password, picture;
     private long addTime, notificationTime;
-    private int id = -1;
-    private boolean reminderSet, passwordSet, pinned, show;
+    private int id = -1, index;
+    private boolean reminderSet, passwordSet, show = true;
 
-    Note(boolean show, String title, String body, String password, long time, boolean reminderSet, boolean passwordSet, boolean pinned, long notificationTime, String picture) {
-        this.show = show;
+    private Note(int index, String title, String body, String password, long time, boolean reminderSet, boolean passwordSet, long notificationTime, String picture) {
+        this.index = index;
         this.title = title;
         this.body = body;
         this.password = password;
         this.addTime = time;
         this.reminderSet = reminderSet;
         this.passwordSet = passwordSet;
-        this.pinned = pinned;
         this.notificationTime = notificationTime;
         this.picture = picture;
     }
@@ -39,16 +37,27 @@ public class Note implements Parcelable
         addTime = note.getAddTime();
         reminderSet = note.isReminderSet();
         passwordSet = note.isPasswordSet();
-        pinned = note.isPinned();
         notificationTime = note.getNotificationTime();
         picture = note.getPicture();
     }
 
+    Note() {
+        index = 0;
+        title = "";
+        body = "";
+        password = "";
+        addTime = 0;
+        reminderSet = false;
+        passwordSet = false;
+        notificationTime = 0;
+        picture = "";
+    }
+
     public static ArrayList<Note> getNotes(DBHelper helper) {
-        int tId;
+        int tId, tIndex;
         String tTitle, tBody, tPassword, tPicture;
         long tAddTime, tNotifTime;
-        boolean tReminderSet, tPasswordSet, tPinned, tShow;
+        boolean tReminderSet, tPasswordSet;
         ArrayList<Note> notes = new ArrayList<>();
         SQLiteDatabase database = helper.getReadableDatabase();
 
@@ -56,6 +65,7 @@ public class Note implements Parcelable
 
         if (cursor.moveToFirst()) {
             int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int indIndex = cursor.getColumnIndex(DBHelper.KEY_INDEX);
             int titleIndex = cursor.getColumnIndex(DBHelper.KEY_TITLE);
             int bodyIndex = cursor.getColumnIndex(DBHelper.KEY_BODY);
             int passIndex = cursor.getColumnIndex(DBHelper.KEY_PASSWORD);
@@ -64,11 +74,10 @@ public class Note implements Parcelable
             int notifIndex = cursor.getColumnIndex(DBHelper.KEY_NOTIF_TIME);
             int passSetIndex = cursor.getColumnIndex(DBHelper.KEY_PASSWORD_SET);
             int reminderSetIndex = cursor.getColumnIndex(DBHelper.KEY_REMINDER_SET);
-            int pinnedSetIndex = cursor.getColumnIndex(DBHelper.KEY_PINNED_SET);
-            int isShowIndex = cursor.getColumnIndex(DBHelper.KEY_IS_SHOW);
 
             do {
                 tId = cursor.getInt(idIndex);
+                tIndex = cursor.getInt(indIndex);
                 tTitle = cursor.getString(titleIndex);
                 tBody = cursor.getString(bodyIndex);
                 tPassword = cursor.getString(passIndex);
@@ -77,9 +86,7 @@ public class Note implements Parcelable
                 tNotifTime = cursor.getLong(notifIndex);
                 tPasswordSet = cursor.getInt(passSetIndex) != 0 ;
                 tReminderSet = cursor.getInt(reminderSetIndex) != 0;
-                tPinned = cursor.getInt(pinnedSetIndex) != 0;
-                tShow = cursor.getInt(isShowIndex) != 0;
-                Note note = new Note(tShow, tTitle, tBody, tPassword, tAddTime, tReminderSet, tPasswordSet, tPinned, tNotifTime, tPicture);
+                Note note = new Note(tIndex, tTitle, tBody, tPassword, tAddTime, tReminderSet, tPasswordSet, tNotifTime, tPicture);
                 note.setId(tId);
                 notes.add(note);
             } while (cursor.moveToNext());
@@ -90,29 +97,64 @@ public class Note implements Parcelable
         return notes;
     }
 
-    public static ArrayList<Note> insertOrUpdateDB(DBHelper helper, ArrayList<Note> notes) {
+    public static Note getLastNote(DBHelper helper) {
+        int tId, tIndex;
+        String tTitle, tBody, tPassword, tPicture;
+        long tAddTime, tNotifTime;
+        boolean tReminderSet, tPasswordSet;
+        SQLiteDatabase database = helper.getReadableDatabase();
+        Cursor cursor = database.query(DBHelper.TABLE_NAME, null, null, null, null, null, null);
+
+        cursor.moveToLast();
+
+        int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+        int indIndex = cursor.getColumnIndex(DBHelper.KEY_INDEX);
+        int titleIndex = cursor.getColumnIndex(DBHelper.KEY_TITLE);
+        int bodyIndex = cursor.getColumnIndex(DBHelper.KEY_BODY);
+        int passIndex = cursor.getColumnIndex(DBHelper.KEY_PASSWORD);
+        int picIndex = cursor.getColumnIndex(DBHelper.KEY_PICTURE);
+        int addIndex = cursor.getColumnIndex(DBHelper.KEY_ADD_TIME);
+        int notifIndex = cursor.getColumnIndex(DBHelper.KEY_NOTIF_TIME);
+        int passSetIndex = cursor.getColumnIndex(DBHelper.KEY_PASSWORD_SET);
+        int reminderSetIndex = cursor.getColumnIndex(DBHelper.KEY_REMINDER_SET);
+
+        tId = cursor.getInt(idIndex);
+        tIndex = cursor.getInt(indIndex);
+        tTitle = cursor.getString(titleIndex);
+        tBody = cursor.getString(bodyIndex);
+        tPassword = cursor.getString(passIndex);
+        tPicture = cursor.getString(picIndex);
+        tAddTime = cursor.getLong(addIndex);
+        tNotifTime = cursor.getLong(notifIndex);
+        tPasswordSet = cursor.getInt(passSetIndex) != 0 ;
+        tReminderSet = cursor.getInt(reminderSetIndex) != 0;
+
+        Note note = new Note(tIndex, tTitle, tBody, tPassword, tAddTime, tReminderSet, tPasswordSet, tNotifTime, tPicture);
+        note.setId(tId);
+
+        cursor.close();
+
+        return note;
+    }
+
+    public static void insertOrUpdateDB(DBHelper helper, Note note) {
         ContentValues cv = new ContentValues();
         SQLiteDatabase database = helper.getReadableDatabase();
 
-        for (Note note : notes) {
-            cv.put(DBHelper.KEY_TITLE, note.getTitle());
-            cv.put(DBHelper.KEY_BODY, note.getBody());
-            cv.put(DBHelper.KEY_PASSWORD, note.getPassword());
-            cv.put(DBHelper.KEY_PICTURE, note.getPicture());
-            cv.put(DBHelper.KEY_ADD_TIME, note.getAddTime());
-            cv.put(DBHelper.KEY_NOTIF_TIME, note.getNotificationTime());
-            cv.put(DBHelper.KEY_PASSWORD_SET, note.isPasswordSet());
-            cv.put(DBHelper.KEY_REMINDER_SET, note.isReminderSet());
-            cv.put(DBHelper.KEY_PINNED_SET, note.isPinned());
-            cv.put(DBHelper.KEY_IS_SHOW, note.isShow());
+        cv.put(DBHelper.KEY_INDEX, note.getIndex());
+        cv.put(DBHelper.KEY_TITLE, note.getTitle());
+        cv.put(DBHelper.KEY_BODY, note.getBody());
+        cv.put(DBHelper.KEY_PASSWORD, note.getPassword());
+        cv.put(DBHelper.KEY_PICTURE, note.getPicture());
+        cv.put(DBHelper.KEY_ADD_TIME, note.getAddTime());
+        cv.put(DBHelper.KEY_NOTIF_TIME, note.getNotificationTime());
+        cv.put(DBHelper.KEY_PASSWORD_SET, note.isPasswordSet());
+        cv.put(DBHelper.KEY_REMINDER_SET, note.isReminderSet());
 
-            int count = database.update(DBHelper.TABLE_NAME, cv, DBHelper.KEY_ID + "=" + note.getId(), null);
+        int count = database.update(DBHelper.TABLE_NAME, cv, DBHelper.KEY_ID + "=" + note.getId(), null);
 
-            if (count == 0)
-                database.insertWithOnConflict(DBHelper.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
-        }
-
-        return getNotes(helper);
+        if (count == 0)
+            database.insertWithOnConflict(DBHelper.TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public static void deleteFromDB(DBHelper helper, Note note) {
@@ -126,6 +168,14 @@ public class Note implements Parcelable
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public boolean isShow() {
@@ -156,6 +206,10 @@ public class Note implements Parcelable
         return addTime;
     }
 
+    public void setAddTime(long addTime) {
+        this.addTime = addTime;
+    }
+
     public boolean isReminderSet() {
         return reminderSet;
     }
@@ -178,14 +232,6 @@ public class Note implements Parcelable
 
     public void setPasswordSet(boolean passwordSet) {
         this.passwordSet = passwordSet;
-    }
-
-    public boolean isPinned() {
-        return pinned;
-    }
-
-    public void setPinned(boolean pinned) {
-        this.pinned = pinned;
     }
 
     public long getNotificationTime() {
@@ -249,7 +295,6 @@ public class Note implements Parcelable
                 ", id=" + id +
                 ", reminderSet=" + reminderSet +
                 ", passwordSet=" + passwordSet +
-                ", pinned=" + pinned +
                 ", show=" + show +
                 '}';
     }
@@ -277,7 +322,6 @@ public class Note implements Parcelable
         parcel.writeLong(notificationTime);
         parcel.writeString(String.valueOf(reminderSet));
         parcel.writeString(String.valueOf(passwordSet));
-        parcel.writeString(String.valueOf(pinned));
         parcel.writeString(picture);
     }
 
@@ -307,7 +351,6 @@ public class Note implements Parcelable
         notificationTime = parcel.readLong();
         reminderSet = Boolean.parseBoolean(parcel.readString());
         passwordSet = Boolean.parseBoolean(parcel.readString());
-        pinned = Boolean.parseBoolean(parcel.readString());
         picture = parcel.readString();
     }
 }

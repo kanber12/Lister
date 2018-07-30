@@ -7,7 +7,4 @@
     <item android:id="@+id/context_delete_note"
         android:title="@string/context_delete" />
 
-    <item android:id="@+id/context_pin_note"
-        android:title="@string/context_pin" />
-
 </menu>

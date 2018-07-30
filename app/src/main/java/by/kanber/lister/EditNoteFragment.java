@@ -3,6 +3,7 @@ package by.kanber.lister;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,31 +54,46 @@ import java.util.regex.Pattern;
 public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDialogInteractionListener {
     public static final int FROM_LIST = 0;
     public static final int FROM_INFO = 1;
-    public static final int ACTION_SAVE = 0;
-    public static final int ACTION_CLOSE = 1;
+    public static final int ACTION_ADD = 0;
+    public static final int ACTION_EDIT = 1;
+    public static final int ACTION_SAVE = 2;
+    public static final int ACTION_CLOSE = 3;
     private static final int PICK_PICTURE = 0;
     private static final int TAKE_PICTURE = 1;
+    private static final int TYPE_PASSWORD = 0;
+    private static final int TYPE_REMINDER = 1;
 
     private OnFragmentInteractionListener mListener;
     private Button passwordButton, reminderButton, removePasswordButton, changePasswordButton, removeReminderButton, changeReminderButton;
     private EditText titleEditText, bodyEditText, enterPasswordEditText, repeatPasswordEditText;
     private ImageView pictureView;
     private ImageButton removePictureView;
+    private MainActivity activity;
 
     private Uri photo;
     private Note note, oldNote;
-    private String title, body;
-    private boolean alertShowed = false;
-    private int from;
+    private boolean passwordAlertShowed = false, reminderAlertShowed = false;
+    private int from, action;
 
     public EditNoteFragment() {}
 
-    public static EditNoteFragment newInstance(Note note, int from) {
+    public static EditNoteFragment newInstance(int action, Note note, int from) {
         EditNoteFragment fragment = new EditNoteFragment();
         Bundle args = new Bundle();
 
+        args.putInt("action", action);
         args.putParcelable("note", note);
         args.putInt("from", from);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    public static EditNoteFragment newInstance(int action) {
+        EditNoteFragment fragment = new EditNoteFragment();
+        Bundle args = new Bundle();
+
+        args.putInt("action", action);
         fragment.setArguments(args);
 
         return fragment;
@@ -87,19 +103,26 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (MainActivity) getActivity();
+
         if (getArguments() != null) {
-            oldNote = getArguments().getParcelable("note");
+            action = getArguments().getInt("action");
+
+            if (action == ACTION_EDIT) {
+                oldNote = getArguments().getParcelable("note");
+                from = getArguments().getInt("from");
+            } else
+                oldNote = new Note();
+
             note = new Note(oldNote);
-            from = getArguments().getInt("from");
         }
 
         setHasOptionsMenu(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_note, container, false);
-
         Toolbar toolbar = view.findViewById(R.id.toolbar_actionbar);
         passwordButton = view.findViewById(R.id.password_button);
         removePasswordButton = view.findViewById(R.id.remove_password_button);
@@ -111,11 +134,10 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         bodyEditText = view.findViewById(R.id.body_edit_text);
         pictureView = view.findViewById(R.id.picture_view);
         removePictureView = view.findViewById(R.id.remove_picture_view);
-        view.findViewById(R.id.pin_check_box).setVisibility(View.GONE);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-
+        activity.setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_toolbar_clear);
-        toolbar.setTitle(getString(R.string.context_edit));
+        toolbar.setTitle(getWindowTitle());
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,35 +145,35 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
             }
         });
 
-        title = oldNote.getTitle();
-        body = oldNote.getBody();
-        titleEditText.setText(oldNote.getTitle());
-        bodyEditText.setText(oldNote.getBody());
+        if (action == ACTION_EDIT) {
+            titleEditText.setText(oldNote.getTitle());
+            bodyEditText.setText(oldNote.getBody());
 
-        if (!Utils.isEmpty(oldNote.getBody())) {
-            passwordButton.setEnabled(true);
-            passwordButton.setTextColor(getResources().getColor(R.color.textColor));
-        }
+            if (!Utils.isEmpty(oldNote.getBody())) {
+                passwordButton.setEnabled(true);
+                passwordButton.setTextColor(getResources().getColor(R.color.textColor));
+            }
 
-        if (!oldNote.getPicture().equals("")) {
-            Glide.with(getActivity()).load(Uri.parse(oldNote.getPicture())).apply(new RequestOptions().signature(new ObjectKey(System.currentTimeMillis()))).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    removePictureView.setVisibility(View.GONE);
-                    ((MainActivity) getActivity()).showCenteredToast(getString(R.string.file_not_found) + "\n" + getString(R.string.successful_removing_picture));
-                    note.setPicture("");
-                    return false;
-                }
+            if (!oldNote.getPicture().equals("")) {
+                Glide.with(activity).load(Uri.parse(oldNote.getPicture())).apply(new RequestOptions().signature(new ObjectKey(System.currentTimeMillis()))).listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        removePictureView.setVisibility(View.GONE);
+                        activity.showCenteredToast(getString(R.string.file_not_found) + "\n" + getString(R.string.successful_removing_picture));
+                        note.setPicture("");
+                        return false;
+                    }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    removePictureView.setVisibility(View.VISIBLE);
-                    return false;
-                }
-            }).into(pictureView);
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        removePictureView.setVisibility(View.VISIBLE);
+                        return false;
+                    }
+                }).into(pictureView);
 
-            passwordButton.setEnabled(true);
-            passwordButton.setTextColor(getResources().getColor(R.color.textColor));
+                passwordButton.setEnabled(true);
+                passwordButton.setTextColor(getResources().getColor(R.color.textColor));
+            }
         }
 
         updateButtons();
@@ -190,14 +212,14 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         removePasswordButton.setOnClickListener(clickListener);
         changePasswordButton.setOnClickListener(clickListener);
         removePictureView.setOnClickListener(clickListener);
+
         bodyEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                body = String.valueOf(charSequence);
-                note.setBody(body);
+                note.setBody(String.valueOf(charSequence));
 
                 enableButtons(Utils.isEmpty(String.valueOf(charSequence)) && note.getPicture().equals(""));
             }
@@ -205,14 +227,14 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
             @Override
             public void afterTextChanged(Editable editable) {}
         });
+
         titleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                title = String.valueOf(charSequence);
-                note.setTitle(title);
+                note.setTitle(String.valueOf(charSequence));
 
                 if (charSequence.length() > 21)
                     titleEditText.setText(charSequence.subSequence(0, 21));
@@ -224,15 +246,17 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
 
         titleEditText.requestFocus();
 
+        if (action == ACTION_ADD)
+            activity.openKeyboard();
+
         return view;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == PICK_PICTURE) {
             if (resultCode == Activity.RESULT_OK) {
-                note.setPicture(data.getDataString());
-                Glide.with(getActivity()).load(data.getData()).listener(new RequestListener<Drawable>() {
+                Glide.with(activity).load(data.getData()).listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         removePictureView.setVisibility(View.GONE);
@@ -241,8 +265,9 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        note.setPicture(data.getDataString());
                         removePictureView.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(), getString(R.string.successful_attaching_picture), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, getString(R.string.successful_attaching_picture), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }).into(pictureView);
@@ -250,13 +275,12 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
             }
 
             if (resultCode == Activity.RESULT_CANCELED)
-                Toast.makeText(getActivity(), getString(R.string.picture_not_selected), Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.picture_not_selected), Toast.LENGTH_SHORT).show();
         }
 
         if (requestCode == TAKE_PICTURE) {
             if (resultCode == Activity.RESULT_OK) {
-                note.setPicture(photo.toString());
-                Glide.with(getActivity()).load(photo).listener(new RequestListener<Drawable>() {
+                Glide.with(activity).load(photo).listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         removePictureView.setVisibility(View.GONE);
@@ -265,8 +289,9 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
 
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        note.setPicture(photo.toString());
                         removePictureView.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(), getString(R.string.successful_attaching_photo), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, getString(R.string.successful_attaching_photo), Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }).into(pictureView);
@@ -274,7 +299,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
             }
 
             if (resultCode == Activity.RESULT_CANCELED)
-                Toast.makeText(getActivity(), getString(R.string.photo_not_selected), Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.photo_not_selected), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -293,16 +318,20 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void checkEquality(int action) {
-        if (action == ACTION_CLOSE) {
-            if (note.equals(oldNote))
-                closeFragment();
-            else
+        if (note.equals(oldNote) && action == ACTION_CLOSE)
+            closeFragment();
+        else {
+            if (action == ACTION_CLOSE)
                 showCloseDialog();
-        } else {
-            if (note.equals(oldNote))
-                closeFragment();
-            else
-                editNote();
+            else {
+                if (this.action == ACTION_EDIT) {
+                    if (note.equals(oldNote))
+                        closeFragment();
+                    else
+                        editNote();
+                } else
+                    addNote();
+            }
         }
     }
 
@@ -314,7 +343,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void choosePicture() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.attach_picture))
                 .setItems(new String[] {getString(R.string.choose_from_gallery), getString(R.string.take_photo)}, new DialogInterface.OnClickListener() {
@@ -331,8 +360,8 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     public void chooseFromGallery() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainActivity.EDIT_PERMISSION_GALLERY);
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MainActivity.EDIT_PERMISSION_GALLERY);
         else {
             Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setType("image/*");
@@ -342,12 +371,12 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     public void takePhoto() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MainActivity.EDIT_PERMISSION_CAMERA);
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, MainActivity.EDIT_PERMISSION_CAMERA);
         else {
             Intent takeIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            String auth = getActivity().getApplicationContext().getPackageName() + ".fileprovider";
-            photo = FileProvider.getUriForFile(getActivity(), auth, createImageFile());
+            String auth = activity.getApplicationContext().getPackageName() + ".fileprovider";
+            photo = FileProvider.getUriForFile(activity, auth, createImageFile());
 
             if (photo != null) {
                 takeIntent.putExtra(MediaStore.EXTRA_OUTPUT, photo);
@@ -359,7 +388,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     private File createImageFile(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(System.currentTimeMillis());
         String imageFileName = "Lister_photo_" + timeStamp;
-        File storage = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storage = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = null;
 
         try {
@@ -372,60 +401,73 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void removePicture() {
-        Toast.makeText(getActivity(), getString(R.string.successful_removing_picture), Toast.LENGTH_SHORT).show();
         note.setPicture("");
-        pictureView.setImageResource(android.R.color.transparent);
+        Glide.with(activity).load(android.R.color.transparent).into(pictureView);
         removePictureView.setVisibility(View.GONE);
 
         enableButtons(Utils.isEmpty(bodyEditText.getText().toString()));
     }
 
-    public void onButtonPressed(boolean needChange) {
+    private void onButtonPressed(boolean needChange) {
         if (mListener != null)
-            mListener.onEditNoteFragmentInteraction(oldNote, note, needChange);
+            mListener.onEditNoteInteraction(oldNote, note, needChange);
+    }
+
+    private void onButtonPressed() {
+        if (mListener != null)
+            mListener.onAddNoteInteraction(note);
     }
 
     private void editNote() {
-        if (!Utils.isEmpty(title)) {
+        if (!Utils.isEmpty(note.getTitle())) {
             boolean needChange = false;
 
-            if (note.isPasswordSet() && Utils.isEmpty(note.getBody()) && note.getPicture().equals("")) {
-                if (!alertShowed)
-                    showConfirmDialog();
-                else {
-                    note.setPasswordSet(false);
-                    note.setPassword("");
+            if (isPasswordRequired() && isReminderNotOut()) {
+                if (!note.equals(oldNote) && note.getNotificationTime() == oldNote.getNotificationTime() && note.getNotificationTime() != 0)
+                    needChange = true;
 
-                    if (!note.equals(oldNote) && note.getNotificationTime() == oldNote.getNotificationTime() && note.getNotificationTime() != 0)
-                        needChange = true;
-
-                    showSaveConfirmDialog(needChange);
-                }
-            } else {
-                if (note.isReminderSet() && note.getNotificationTime() <= Calendar.getInstance().getTimeInMillis())
-                    ((MainActivity) getActivity()).showCenteredToast(getString(R.string.reminder_out));
-                else {
-                    if (!note.equals(oldNote) && note.getNotificationTime() == oldNote.getNotificationTime() && note.isReminderSet())
-                        needChange = true;
-
-                    showSaveConfirmDialog(needChange);
-                }
+                showSaveConfirmDialog(needChange);
             }
         } else {
             titleEditText.requestFocus();
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.enter_title_warning));
+            activity.showCenteredToast(getString(R.string.enter_title_warning));
         }
     }
 
-    private void showConfirmDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    private void addNote() {
+        if (!Utils.isEmpty(note.getTitle())) {
+            note.setAddTime(System.currentTimeMillis());
+
+            if (isPasswordRequired() && isReminderNotOut()) {
+                onButtonPressed();
+                closeFragment();
+            }
+        } else {
+            activity.showCenteredToast(getString(R.string.enter_title_warning));
+            titleEditText.requestFocus();
+            titleEditText.setText("");
+        }
+    }
+
+    private void showConfirmDialog(final int type) {
+        String message = "";
+
+        switch (type) {
+            case TYPE_PASSWORD: message = getString(R.string.note_without_text); break;
+            case TYPE_REMINDER: message = getString(R.string.reminder_out); break;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.warning))
-                .setMessage(getString(R.string.note_without_text))
-                .setPositiveButton(getString(R.string.get_it), new DialogInterface.OnClickListener() {
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.got_it), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        alertShowed = true;
+                        switch (type) {
+                            case TYPE_PASSWORD: passwordAlertShowed = true; break;
+                            case TYPE_REMINDER: reminderAlertShowed = true; break;
+                        }
                     }
                 });
 
@@ -433,7 +475,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showCloseDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.discarding_text))
@@ -455,7 +497,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showRemovePictureDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.remove_picture_text))
@@ -468,6 +510,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
                 .setPositiveButton(getString(R.string.answer_yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(activity, getString(R.string.successful_removing_picture), Toast.LENGTH_SHORT).show();
                         removePicture();
                     }
                 })
@@ -477,7 +520,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showReplacePictureDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.picture_replacing_text))
@@ -499,7 +542,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showSaveConfirmDialog(final boolean needChange) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.save_text))
@@ -522,11 +565,11 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
 
     private void showSetReminderDialog() {
         SetReminderDialog dialog = new SetReminderDialog();
-        dialog.show(getActivity().getSupportFragmentManager(), "setReminderDialog");
+        dialog.show(activity.getSupportFragmentManager(), "setReminderDialog");
     }
 
     private void showRemoveReminderDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.removing_reminder_text))
@@ -544,8 +587,8 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showSetPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View passwordView = getActivity().getLayoutInflater().inflate(R.layout.set_password_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View passwordView = activity.getLayoutInflater().inflate(R.layout.set_password_dialog, null);
         enterPasswordEditText = passwordView.findViewById(R.id.setPasswordEditText);
         repeatPasswordEditText = passwordView.findViewById(R.id.repeatPasswordEditText);
 
@@ -564,7 +607,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
                 Button negButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
 
                 enterPasswordEditText.requestFocus();
-                ((MainActivity) getActivity()).openKeyboard();
+                activity.openKeyboard();
 
                 posButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -579,7 +622,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
                 negButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((MainActivity) getActivity()).closeKeyboard();
+                        activity.closeKeyboard();
                         pswDialog.cancel();
                     }
                 });
@@ -590,8 +633,8 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void showRemovePasswordDialog() {
-        ((MainActivity) getActivity()).closeKeyboard();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        activity.closeKeyboard();
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.removing_password_text))
@@ -609,63 +652,54 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     private void closeFragment() {
-        ((MainActivity) getActivity()).closeKeyboard();
-        getActivity().getSupportFragmentManager().popBackStack();
-        getActivity().getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(EditNoteFragment.this).commit();
+        activity.closeKeyboard();
+        activity.getSupportFragmentManager().popBackStack();
+        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(EditNoteFragment.this).commit();
     }
 
     private void openEditedNote(boolean needChange) {
         if (from == FROM_INFO) {
-            Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag("noteInfoFragment");
-            getActivity().getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(fragment).commit();
+            Fragment fragment = activity.getSupportFragmentManager().findFragmentByTag("noteInfoFragment");
+            activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(fragment).commit();
             onButtonPressed(needChange);
             closeFragment();
-            getActivity().getSupportFragmentManager().popBackStack();
+            activity.getSupportFragmentManager().popBackStack();
         } else {
             onButtonPressed(needChange);
             closeFragment();
         }
 
-        FragmentTransaction fTrans = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
         NoteInfoFragment fragment = NoteInfoFragment.newInstance(note);
         fTrans.replace(R.id.container, fragment, "noteInfoFragment").addToBackStack("tag");
         fTrans.commit();
     }
 
     private void updateButtons() {
-        if (note.isPasswordSet()) {
-            passwordButton.setVisibility(View.INVISIBLE);
-            removePasswordButton.setVisibility(View.VISIBLE);
-            changePasswordButton.setVisibility(View.VISIBLE);
-        } else {
-            passwordButton.setVisibility(View.VISIBLE);
-            removePasswordButton.setVisibility(View.INVISIBLE);
-            changePasswordButton.setVisibility(View.INVISIBLE);
-        }
+        int setPassBtnVis = note.isPasswordSet() ? View.GONE : View.VISIBLE;
+        int changePassBtnVis = note.isPasswordSet() ? View.VISIBLE : View.GONE;
+        int setRemBtnVis = note.isReminderSet() || note.getNotificationTime() > 0 ? View.GONE : View.VISIBLE;
+        int changeRemBtnVis = note.isReminderSet() || note.getNotificationTime() > 0 ? View.VISIBLE : View.GONE;
 
-        if (note.isReminderSet() || note.getNotificationTime() > 0) {
-            reminderButton.setVisibility(View.INVISIBLE);
-            removeReminderButton.setVisibility(View.VISIBLE);
-            changeReminderButton.setVisibility(View.VISIBLE);
-        } else {
-            reminderButton.setVisibility(View.VISIBLE);
-            removeReminderButton.setVisibility(View.INVISIBLE);
-            changeReminderButton.setVisibility(View.INVISIBLE);
-        }
+        passwordButton.setVisibility(setPassBtnVis);
+        removePasswordButton.setVisibility(changePassBtnVis);
+        changePasswordButton.setVisibility(changePassBtnVis);
+
+        reminderButton.setVisibility(setRemBtnVis);
+        removeReminderButton.setVisibility(changeRemBtnVis);
+        changeReminderButton.setVisibility(changeRemBtnVis);
     }
 
     private void enableButtons(boolean statement) {
+        passwordButton.setEnabled(!statement);
+        removePasswordButton.setEnabled(!statement);
+        changePasswordButton.setEnabled(!statement);
+
         if (statement) {
-            passwordButton.setEnabled(false);
-            removePasswordButton.setEnabled(false);
-            changePasswordButton.setEnabled(false);
             passwordButton.setTextColor(getResources().getColor(R.color.materialGrey600));
             removePasswordButton.setTextColor(getResources().getColor(R.color.materialGrey600));
             changePasswordButton.setTextColor(getResources().getColor(R.color.materialGrey600));
         } else {
-            passwordButton.setEnabled(true);
-            removePasswordButton.setEnabled(true);
-            changePasswordButton.setEnabled(true);
             passwordButton.setTextColor(getResources().getColor(R.color.textColor));
             removePasswordButton.setTextColor(getResources().getColor(R.color.textColor));
             changePasswordButton.setTextColor(getResources().getColor(R.color.textColor));
@@ -676,7 +710,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         String password = enterPasswordEditText.getText().toString(), repeatedPassword = repeatPasswordEditText.getText().toString();
 
         if (Utils.isEmpty(password)) {
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.enter_password_warning));
+            activity.showCenteredToast(getString(R.string.enter_password_warning));
             enterPasswordEditText.requestFocus();
             enterPasswordEditText.setText("");
             repeatPasswordEditText.setText("");
@@ -684,21 +718,21 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         }
 
         if (!repeatedPassword.equals(password)) {
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.passwords_do_not_match_warning));
+            activity.showCenteredToast(getString(R.string.passwords_do_not_match_warning));
             repeatPasswordEditText.requestFocus();
             repeatPasswordEditText.setText("");
             return false;
         }
 
         if (password.length() <= 4) {
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.password_short_warning));
+            activity.showCenteredToast(getString(R.string.password_short_warning));
             enterPasswordEditText.requestFocus();
             repeatPasswordEditText.setText("");
             return false;
         }
 
         if (!isCorrectPassword(password)) {
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.not_correct_password_warning));
+            activity.showCenteredToast(getString(R.string.not_correct_password_warning));
             enterPasswordEditText.requestFocus();
             enterPasswordEditText.setText("");
             repeatPasswordEditText.setText("");
@@ -717,11 +751,52 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         return m.matches();
     }
 
+    private boolean isPasswordRequired() {
+        if (note.isPasswordSet() && Utils.isEmpty(note.getBody()) && note.getPicture().equals("")) {
+            if (!passwordAlertShowed) {
+                showConfirmDialog(TYPE_PASSWORD);
+
+                return false;
+            } else {
+                note.setPasswordSet(false);
+                note.setPassword("");
+
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isReminderNotOut() {
+        if (note.isReminderSet() && note.getNotificationTime() <= Calendar.getInstance().getTimeInMillis()) {
+            if (!reminderAlertShowed) {
+                showConfirmDialog(TYPE_REMINDER);
+
+                return false;
+            } else {
+                note.setReminderSet(false);
+                note.setNotificationTime(0);
+
+                return true;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public void onSetReminderDialogInteraction(int position, long time) {
         note.setReminderSet(true);
         note.setNotificationTime(time);
         updateButtons();
+    }
+
+    private String getWindowTitle() {
+        if (action == ACTION_ADD)
+            return getString(R.string.add_note);
+        else
+            return getString(R.string.context_edit);
     }
 
     @Override
@@ -742,6 +817,8 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     }
 
     public interface OnFragmentInteractionListener {
-        void onEditNoteFragmentInteraction(Note old, Note note, boolean needChange);
+        void onEditNoteInteraction(Note old, Note note, boolean needChange);
+
+        void onAddNoteInteraction(Note note);
     }
 }

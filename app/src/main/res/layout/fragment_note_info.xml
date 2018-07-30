@@ -1,17 +1,24 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorNoteCard"
     tools:context="by.kanber.lister.NoteInfoFragment">
 
-    <include layout="@layout/toolbar" />
-
-    <ScrollView
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical">
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,9 +39,11 @@
                 android:textSize="20sp" />
 
             <FrameLayout
+                android:id="@+id/noteInfoImageFrame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp">
+                android:layout_margin="10dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/infoPictureView"
@@ -65,6 +74,6 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

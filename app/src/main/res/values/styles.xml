@@ -9,7 +9,6 @@
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:itemBackground">@color/colorWhite</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
@@ -27,8 +26,6 @@
         <item name="colorNoteTitleText">@color/theme_green_title</item>
         <item name="colorNoteTimeText">@color/theme_green_time</item>
         <item name="colorReminderON">@color/theme_green_reminder</item>
-        <item name="colorPinnedNote">@color/theme_green_pin</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemeTeal" parent="Theme.AppCompat.Light.NoActionBar">
@@ -39,8 +36,6 @@
         <item name="colorNoteTitleText">@color/textColor</item>
         <item name="colorNoteTimeText">@color/textColor</item>
         <item name="colorReminderON">@color/materialAmberA400</item>
-        <item name="colorPinnedNote">@color/materialLightBlueA400</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemeRed" parent="Theme.AppCompat.Light.NoActionBar">
@@ -51,8 +46,6 @@
         <item name="colorNoteTitleText">@color/textColor</item>
         <item name="colorNoteTimeText">@color/textColor</item>
         <item name="colorReminderON">@color/materialAmberA400</item>
-        <item name="colorPinnedNote">@color/materialLightBlueA400</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemePink" parent="Theme.AppCompat.Light.NoActionBar">
@@ -63,8 +56,6 @@
         <item name="colorNoteTitleText">@color/textColor</item>
         <item name="colorNoteTimeText">@color/textColor</item>
         <item name="colorReminderON">@color/materialAmberA400</item>
-        <item name="colorPinnedNote">@color/materialLimeA700</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemeIndigo" parent="Theme.AppCompat.Light.NoActionBar">
@@ -75,8 +66,6 @@
         <item name="colorNoteTitleText">@color/textColor</item>
         <item name="colorNoteTimeText">@color/textColor</item>
         <item name="colorReminderON">@color/materialAmberA400</item>
-        <item name="colorPinnedNote">@color/materialLightBlueA400</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemePurple" parent="Theme.AppCompat.Light.NoActionBar">
@@ -87,9 +76,6 @@
         <item name="colorNoteTitleText">@color/theme_purple_title</item>
         <item name="colorNoteTimeText">@color/theme_purple_time</item>
         <item name="colorReminderON">@color/theme_purple_reminder</item>
-        <item name="colorPinnedNote">@color/theme_purple_pin</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
-
     </style>
 
     <style name="ThemeOrange" parent="Theme.AppCompat.Light.NoActionBar">
@@ -100,8 +86,6 @@
         <item name="colorNoteTitleText">@color/theme_orange_title</item>
         <item name="colorNoteTimeText">@color/theme_orange_time</item>
         <item name="colorReminderON">@color/theme_orange_reminder</item>
-        <item name="colorPinnedNote">@color/theme_orange_pin</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="ThemeBlue" parent="Theme.AppCompat.Light.NoActionBar">
@@ -112,8 +96,6 @@
         <item name="colorNoteTitleText">@color/theme_blue_title</item>
         <item name="colorNoteTimeText">@color/theme_blue_time</item>
         <item name="colorReminderON">@color/theme_blue_reminder</item>
-        <item name="colorPinnedNote">@color/theme_blue_pin</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarCustom</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -129,10 +111,6 @@
         <item name="closeIcon">@drawable/ic_toolbar_clear</item>
         <item name="queryHint">@string/search_hint</item>
         <item name="android:imeActionId">6</item>
-    </style>
-    
-    <style name="ButtonBarCustom" parent="Widget.AppCompat.Button.Borderless">
-        <item name="android:textColor">?android:attr/colorAccent</item>
     </style>
 
 </resources>

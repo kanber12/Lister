@@ -25,31 +25,24 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "ListerLog";
-    public static final int ADD_PERMISSION_GALLERY = 1;
-    public static final int ADD_PERMISSION_CAMERA = 2;
-    public static final int EDIT_PERMISSION_GALLERY = 3;
-    public static final int EDIT_PERMISSION_CAMERA = 4;
+    public static final int EDIT_PERMISSION_GALLERY = 1;
+    public static final int EDIT_PERMISSION_CAMERA = 2;
 
     public static MainActivity instance;
-
-    private SharedPreferences sPref;
     private DBHelper helper;
 
-    private ArrayList<Note> notesList;
-    private int currentSortType, currTheme;
+    private int currTheme;
     private String currLang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         currTheme = PreferenceManager.getDefaultSharedPreferences(this).getInt("theme", 0);
+        helper = new DBHelper(this);
         setTheme(Utils.currentTheme(currTheme));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        notesList = new ArrayList<>();
-        helper = new DBHelper(this);
         instance = this;
-        load();
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -57,10 +50,8 @@ public class MainActivity extends AppCompatActivity {
         if (manager != null)
             manager.cancelAll();
 
-        notesList = Note.getNotes(helper);
-
         FragmentTransaction fTrans = getSupportFragmentManager().beginTransaction();
-        NotesListFragment fragment = NotesListFragment.newInstance(notesList, currentSortType);
+        NotesListFragment fragment = new NotesListFragment();
         fTrans.replace(R.id.container, fragment, "notesListFragment");
         fTrans.commit();
     }
@@ -77,14 +68,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults.length > 0 && Utils.allPermissionsGranted(grantResults)) {
-            if (requestCode == ADD_PERMISSION_GALLERY || requestCode == ADD_PERMISSION_CAMERA) {
-                AddNoteFragment fragment = (AddNoteFragment) getSupportFragmentManager().findFragmentByTag("addNoteFragment");
-
-                switch (requestCode) {
-                    case ADD_PERMISSION_GALLERY: fragment.chooseFromGallery(); break;
-                    case ADD_PERMISSION_CAMERA: fragment.takePhoto(); break;
-                }
-            } else {
+            if (requestCode == EDIT_PERMISSION_GALLERY || requestCode == EDIT_PERMISSION_CAMERA) {
                 EditNoteFragment fragment = (EditNoteFragment) getSupportFragmentManager().findFragmentByTag("editNoteFragment");
 
                 switch (requestCode) {
@@ -109,18 +93,6 @@ public class MainActivity extends AppCompatActivity {
     public void changeReminderStatus() {
         NotesListFragment fragment = (NotesListFragment) getSupportFragmentManager().findFragmentByTag("notesListFragment");
         fragment.checkReminderIsOut();
-    }
-
-    private void save() {
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = sPref.edit();
-        editor.putInt("sortType", currentSortType);
-        editor.apply();
-    }
-
-    private void load() {
-        sPref = getPreferences(MODE_PRIVATE);
-        currentSortType = sPref.getInt("sortType", NotesListFragment.SORT_TYPE_CREATED_TIME_REVERSED);
     }
 
     public void showCenteredToast(String msg) {
@@ -148,10 +120,6 @@ public class MainActivity extends AppCompatActivity {
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
-    public void setCurrentSortType(int currentSortType) {
-        this.currentSortType = currentSortType;
-    }
-
     public DBHelper getHelper() {
         return helper;
     }
@@ -159,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        save();
         instance = null;
     }
 }

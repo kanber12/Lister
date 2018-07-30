@@ -72,6 +72,7 @@ public class SetReminderDialog extends DialogFragment {
         reminderDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
+                datePicker.setVisibility(View.GONE);
                 final Button posButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
                 final Button negButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
                 Button neutButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL);

@@ -3,17 +3,27 @@ package by.kanber.lister;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
 
 import org.joda.time.DateTime;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Utils {
     public static final int KEY_REMINDER_SET = 0;
@@ -22,8 +32,7 @@ public class Utils {
 
     private static SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy HH mm", Locale.US);
 
-    public static String timeToString(long time)
-    {
+    private static String timeToString(long time) {
         return format.format(new Date(time));
     }
 
@@ -60,23 +69,23 @@ public class Utils {
         }
     }
 
-    public static boolean isToday(DateTime currTime, DateTime time) {
+    private static boolean isToday(DateTime currTime, DateTime time) {
         return currTime.getDayOfMonth() == time.getDayOfMonth() && currTime.getMonthOfYear() == time.getMonthOfYear() && currTime.getYear() == time.getYear();
     }
 
-    public static boolean isYesterday(DateTime currTime, DateTime time) {
+    private static boolean isYesterday(DateTime currTime, DateTime time) {
         return currTime.getYear() - time.getYear() == 1 && currTime.getDayOfMonth() == 1 && time.getDayOfMonth() == 31 && currTime.getMonthOfYear() == 1 && time.getMonthOfYear() == 12 ||
                 currTime.getYear() == time.getYear() && currTime.getMonthOfYear() - time.getMonthOfYear() == 1 && currTime.getDayOfMonth() == 1 && time.getDayOfMonth() == getDaysInMonth(time.getMonthOfYear(), time.getYear()) ||
                 currTime.getYear() == time.getYear() && currTime.getMonthOfYear() == time.getMonthOfYear() && currTime.getDayOfMonth() - time.getDayOfMonth() == 1;
     }
 
-    public static boolean isTomorrow(DateTime currTime, DateTime time) {
+    private static boolean isTomorrow(DateTime currTime, DateTime time) {
         return time.getYear() - currTime.getYear() == 1 && currTime.getDayOfMonth() == 31 && time.getDayOfMonth() == 1 && currTime.getMonthOfYear() == 12 && time.getMonthOfYear() == 1 ||
                 time.getYear() == currTime.getYear() && time.getMonthOfYear() - currTime.getMonthOfYear() == 1 && time.getDayOfMonth() == 1 && currTime.getDayOfMonth() == getDaysInMonth(currTime.getMonthOfYear(), currTime.getYear()) ||
                 time.getYear() == currTime.getYear() && time.getMonthOfYear() == currTime.getMonthOfYear() && time.getDayOfMonth() - currTime.getDayOfMonth() == 1;
     }
 
-    public static double getDaysInMonth(int month, int year) {
+    private static double getDaysInMonth(int month, int year) {
         return 28 + ((month + Math.floor(month / 8)) % 2) + 2 % month + Math.floor((1 + (1 - (year % 4 + 2) % (year % 4 + 1)) * ((year % 100 + 2) % (year % 100 + 1)) + (1 - (year % 400 + 2) % (year % 400 + 1))) / month) + Math.floor(1/month) - Math.floor(((1 - (year % 4 + 2) % (year % 4 + 1)) * ((year % 100 + 2) % (year % 100 + 1)) + (1 - (year % 400 + 2) % (year % 400 + 1)))/month);
     }
 
@@ -179,14 +188,14 @@ public class Utils {
         int type = PreferenceManager.getDefaultSharedPreferences(context).getInt("vibration", 0);
 
         switch (type) {
-            case 0: return "Vibration 1";
-            case 1: return "Vibration 2";
-            case 2: return "Vibration 3";
-            case 3: return "Vibration 4";
-            case 4: return "Vibration 5";
+            case 0: return context.getString(R.string.vibration_1);
+            case 1: return context.getString(R.string.vibration_2);
+            case 2: return context.getString(R.string.vibration_3);
+            case 3: return context.getString(R.string.vibration_4);
+            case 4: return context.getString(R.string.vibration_5);
         }
 
-        return "Vibration 1";
+        return context.getString(R.string.vibration_1);
     }
 
     public static boolean allPermissionsGranted(int[] grantResults) {
@@ -196,5 +205,13 @@ public class Utils {
 
         return true;
     }
-}
 
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
+    }
+}

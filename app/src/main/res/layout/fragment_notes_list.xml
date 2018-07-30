@@ -2,22 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="by.kanber.lister.NotesListFragment">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <include layout="@layout/toolbar" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+    </android.support.design.widget.AppBarLayout>
 
-    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <TextView
         android:id="@+id/emptyListText"
@@ -46,6 +47,7 @@
         android:layout_height="56dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:layout_behavior="by.kanber.lister.FABAnimation"
         android:src="@drawable/ic_add_note" />
 
 </android.support.design.widget.CoordinatorLayout>
