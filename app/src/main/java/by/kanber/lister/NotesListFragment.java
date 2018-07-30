@@ -1,7 +1,7 @@
 package by.kanber.lister;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;

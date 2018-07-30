@@ -9,6 +9,7 @@
         <item name="searchViewStyle">@style/AppSearchViewStyle</item>
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:itemBackground">@color/colorWhite</item>
+        <item name="colorReminderOFF">@color/colorWhite</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

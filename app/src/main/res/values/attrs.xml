@@ -4,4 +4,5 @@
     <attr name="colorNoteTitleText" format="reference" />
     <attr name="colorNoteTimeText" format="reference" />
     <attr name="colorReminderON" format="reference" />
+    <attr name="colorReminderOFF" format="reference" />
 </resources>

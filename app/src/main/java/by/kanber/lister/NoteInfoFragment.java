@@ -1,6 +1,6 @@
 package by.kanber.lister;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Context;

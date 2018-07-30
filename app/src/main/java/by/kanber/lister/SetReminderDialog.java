@@ -1,6 +1,6 @@
 package by.kanber.lister;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -29,6 +29,7 @@ public class SetReminderDialog extends DialogFragment {
     private DatePicker datePicker;
     private TimePicker timePicker;
     private AlertDialog reminderDialog;
+    private MainActivity activity;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PATTERN, Locale.US);
     private boolean isTime = false;
@@ -49,6 +50,8 @@ public class SetReminderDialog extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        activity = (MainActivity) getActivity();
+
         if (getArguments() != null)
             position = getArguments().getInt("position", -1);
     }
@@ -56,8 +59,8 @@ public class SetReminderDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View reminderView = getActivity().getLayoutInflater().inflate(R.layout.set_reminder_dialog, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View reminderView = activity.getLayoutInflater().inflate(R.layout.set_reminder_dialog, null);
         timePicker = reminderView.findViewById(R.id.set_reminder_time);
         datePicker = reminderView.findViewById(R.id.set_reminder_date);
 
@@ -72,21 +75,18 @@ public class SetReminderDialog extends DialogFragment {
         reminderDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                datePicker.setVisibility(View.GONE);
                 final Button posButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_POSITIVE);
                 final Button negButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEGATIVE);
                 Button neutButton = ((AlertDialog) dialog).getButton(DialogInterface.BUTTON_NEUTRAL);
 
-                negButton.setTextColor(getResources().getColor(R.color.materialGrey400));
-                negButton.setEnabled(false);
+                negButton.setVisibility(View.GONE);
 
                 posButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (!isTime) {
                             isTime = true;
-                            negButton.setEnabled(true);
-                            negButton.setTextColor(Utils.getColor(getActivity(), android.R.attr.colorAccent));
+                            negButton.setVisibility(View.VISIBLE);
                             posButton.setText(getString(R.string.set));
                             datePicker.setVisibility(View.GONE);
                             timePicker.setVisibility(View.VISIBLE);
@@ -100,8 +100,7 @@ public class SetReminderDialog extends DialogFragment {
                     public void onClick(View v) {
                         if (isTime) {
                             isTime = false;
-                            negButton.setEnabled(false);
-                            negButton.setTextColor(getResources().getColor(R.color.materialGrey400));
+                            negButton.setVisibility(View.GONE);
                             posButton.setText(getString(R.string.next));
                             datePicker.setVisibility(View.VISIBLE);
                             timePicker.setVisibility(View.GONE);
@@ -120,7 +119,7 @@ public class SetReminderDialog extends DialogFragment {
 
         Calendar calendar = Calendar.getInstance();
         datePicker.setMinDate(calendar.getTimeInMillis());
-        timePicker.setIs24HourView(DateFormat.is24HourFormat(getActivity()));
+        timePicker.setIs24HourView(DateFormat.is24HourFormat(activity));
         date = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH) + "." + (calendar.get(Calendar.MONTH) + 1) + "." + calendar.get(Calendar.YEAR));
         time = String.valueOf("." + calendar.get(Calendar.HOUR_OF_DAY)) + "." + calendar.get(Calendar.MINUTE);
 
@@ -151,7 +150,7 @@ public class SetReminderDialog extends DialogFragment {
         }
 
         if (tmp.getTime() <= Calendar.getInstance().getTimeInMillis())
-            ((MainActivity) getActivity()).showCenteredToast(getString(R.string.reminder_set_to_past_warning));
+            activity.showCenteredToast(getString(R.string.reminder_set_to_past_warning));
         else {
             listener.onSetReminderDialogInteraction(position, tmp.getTime());
             reminderDialog.cancel();

@@ -120,14 +120,20 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             holder.timeTextView.setTextColor(Utils.getColor(context, R.attr.colorNoteTimeText));
 
             if (note.isReminderSet()) {
-                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_action_reminder);
+                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_action_reminder_on);
 
                 if (drawable != null) {
                     drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderON), PorterDuff.Mode.MULTIPLY);
                     holder.reminderButton.setImageDrawable(drawable);
                 }
-            } else
-                holder.reminderButton.setImageResource(R.drawable.ic_action_reminder);
+            } else {
+                Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_action_reminder_off);
+
+                if (drawable != null) {
+                    drawable.setColorFilter(Utils.getColor(context, R.attr.colorReminderOFF), PorterDuff.Mode.MULTIPLY);
+                    holder.reminderButton.setImageDrawable(drawable);
+                }
+            }
 
             if (note.getNotificationTime() != 0)
                 holder.reminderTextView.setText(Utils.viewableTime(context, note.getNotificationTime(), Utils.KEY_NONE));
