@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults.length > 0 && Utils.allPermissionsGranted(grantResults)) {
             if (requestCode == EDIT_PERMISSION_GALLERY || requestCode == EDIT_PERMISSION_CAMERA) {
-                EditNoteFragment fragment = (EditNoteFragment) getSupportFragmentManager().findFragmentByTag("editNoteFragment");
+                NoteFragment fragment = (NoteFragment) getSupportFragmentManager().findFragmentByTag("editNoteFragment");
 
                 switch (requestCode) {
                     case EDIT_PERMISSION_GALLERY: fragment.chooseFromGallery(); break;

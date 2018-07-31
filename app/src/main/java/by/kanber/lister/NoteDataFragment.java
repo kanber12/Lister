@@ -31,7 +31,7 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.ObjectKey;
 
 
-public class NoteInfoFragment extends Fragment {
+public class NoteDataFragment extends Fragment {
     public static final int MODE_DELETE = 0;
     public static final int MODE_CLOSE = 1;
 
@@ -44,10 +44,10 @@ public class NoteInfoFragment extends Fragment {
 
     private Note note;
 
-    public NoteInfoFragment() {}
+    public NoteDataFragment() {}
 
-    public static NoteInfoFragment newInstance(Note n) {
-        NoteInfoFragment fragment = new NoteInfoFragment();
+    public static NoteDataFragment newInstance(Note n) {
+        NoteDataFragment fragment = new NoteDataFragment();
         Bundle args = new Bundle();
         args.putParcelable("note", n);
         fragment.setArguments(args);
@@ -143,7 +143,7 @@ public class NoteInfoFragment extends Fragment {
 
     private void closeFragment() {
         activity.getSupportFragmentManager().popBackStack();
-        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(NoteInfoFragment.this).commit();
+        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(NoteDataFragment.this).commit();
     }
 
     private void delete() {
@@ -169,7 +169,7 @@ public class NoteInfoFragment extends Fragment {
 
     private void edit() {
         FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
-        EditNoteFragment fragment = EditNoteFragment.newInstance(EditNoteFragment.ACTION_EDIT, note, EditNoteFragment.FROM_INFO);
+        NoteFragment fragment = NoteFragment.newInstance(NoteFragment.ACTION_EDIT, note, NoteFragment.FROM_INFO);
         fTrans.replace(R.id.container, fragment, "editNoteFragment").addToBackStack("tag");
         fTrans.commit();
     }

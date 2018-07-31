@@ -286,6 +286,7 @@ public class Note implements Parcelable
     @Override
     public String toString() {
         return "Note{" +
+                "index=" + index + "\'" +
                 "title='" + title + '\'' +
                 ", body='" + body + '\'' +
                 ", password='" + password + '\'' +

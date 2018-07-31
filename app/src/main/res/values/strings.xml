@@ -41,6 +41,7 @@
     <string name="successful_editing">Note successfully edited</string>
     <string name="text_hidden"><i>Text hidden</i></string>
     <string name="no_text"><i>No text</i></string>
+    <string name="picture"><i>Picture</i></string>
     <string name="today">today </string>
     <string name="yesterday">yesterday </string>
     <string name="tomorrow">tomorrow </string>
@@ -89,6 +90,7 @@
     <string name="vibration_3">Vibration 3</string>
     <string name="vibration_4">Vibration 4</string>
     <string name="vibration_5">Vibration 5</string>
+    <string name="channel_name" translatable="false">Reminder</string>
 
     <string-array name="langs_items">
         <item>System default</item>

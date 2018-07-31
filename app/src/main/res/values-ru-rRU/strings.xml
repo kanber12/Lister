@@ -38,6 +38,7 @@
     <string name="today">сегодня</string>
     <string name="no_text"><i>Нет текста</i></string>
     <string name="text_hidden"><i>Текст скрыт</i></string>
+    <string name="picture"><i>Изображение</i></string>
     <string name="at">в</string>
     <string name="key_added">Добавлено</string>
     <string name="warning">Внимание</string>

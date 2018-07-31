@@ -1,8 +1,8 @@
 package by.kanber.lister;
 
 import android.app.AlarmManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFragmentInteractionListener, EditNoteFragment.OnFragmentInteractionListener, SetReminderDialog.OnDialogInteractionListener {
+public class NotesListFragment extends Fragment implements NoteDataFragment.OnFragmentInteractionListener, NoteFragment.OnFragmentInteractionListener, SetReminderDialog.OnDialogInteractionListener {
     public static final int ACTION_OPEN = 0;
     public static final int ACTION_EDIT = 1;
     public static final int ACTION_DELETE = 2;
@@ -153,7 +153,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
             @Override
             public void onClick(View view) {
                 FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
-                EditNoteFragment fragment = EditNoteFragment.newInstance(EditNoteFragment.ACTION_ADD);
+                NoteFragment fragment = NoteFragment.newInstance(NoteFragment.ACTION_ADD);
                 fTrans.replace(R.id.container, fragment, "editNoteFragment").addToBackStack("tag");
                 fTrans.commit();
             }
@@ -240,15 +240,15 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
         }
 
         Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
-        toast.getView().findViewById(android.R.id.message).setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        ((TextView) toast.getView().findViewById(android.R.id.message)).setGravity(Gravity.CENTER);
         toast.show();
     }
 
     @Override
     public void onNoteInfoFragmentInteraction(Note note, int mode) {
         switch (mode) {
-            case NoteInfoFragment.MODE_DELETE: deleteNote(note); break;
-            case NoteInfoFragment.MODE_CLOSE: updateList(false); break;
+            case NoteDataFragment.MODE_DELETE: deleteNote(note); break;
+            case NoteDataFragment.MODE_CLOSE: updateList(false); break;
         }
 
         updateList(false);
@@ -259,6 +259,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
         int pos = old.getIndex();
         notes.remove(pos);
         notes.add(pos, note);
+        reindexNotes();
         Note.insertOrUpdateDB(helper, note);
 
         String message = getString(R.string.successful_editing);
@@ -338,7 +339,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
 
     private void showNoteInfoFragment(Note note) {
         FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
-        NoteInfoFragment fragment = NoteInfoFragment.newInstance(note);
+        NoteDataFragment fragment = NoteDataFragment.newInstance(note);
         fTrans.replace(R.id.container, fragment, "noteInfoFragment").addToBackStack("tag");
         fTrans.commit();
     }
@@ -349,7 +350,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
     }
 
     private void showEnterPasswordDialog(final Note note, final int action) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         View enterPasswordView = activity.getLayoutInflater().inflate(R.layout.enter_password_dialog, null);
         enterPasswordEditText = enterPasswordView.findViewById(R.id.enterPasswordEditText);
 
@@ -374,7 +375,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
                     public void onClick(View v) {
                         String password = enterPasswordEditText.getText().toString();
 
-                        if (note.getPassword().equals(password)/*Utils.checkHash(password, note.getPassword(), note.getAddTime())*/) {
+                        if (note.getPassword().equals(password)) {
                             switchActions(note, action);
                             enterPasswordDialog.cancel();
                         } else {
@@ -426,6 +427,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
         notificationIntent.putExtra(NotificationPublisher.NOTE_ID, note.getId());
         notificationIntent.putExtra(NotificationPublisher.NOTE_TITLE, note.getTitle());
         notificationIntent.putExtra(NotificationPublisher.NOTE_BODY, note.getBody());
+        notificationIntent.putExtra(NotificationPublisher.NOTE_PICTURE, note.getPicture());
         notificationIntent.putExtra(NotificationPublisher.NOTE_IS_PASS, note.isPasswordSet());
         notificationIntent.putExtra(NotificationPublisher.NOTE_TIME, note.getNotificationTime());
         PendingIntent pendingIntent = getPendingIntent(note.getId(), notificationIntent);
@@ -460,7 +462,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
     }
 
     private void showDeleteDialog(final Note note) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(getString(R.string.confirm))
                 .setMessage(getString(R.string.delete_note_text))
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -487,7 +489,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
     }
 
     private void deleteNote(Note note) {
-        NotificationManager manager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat manager = NotificationManagerCompat.from(activity);
         notes.remove(note);
         Note.deleteFromDB(helper, note);
         reindexNotes();
@@ -495,8 +497,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
         if (note.isReminderSet())
             cancelNotification(note);
 
-        if (manager != null)
-            manager.cancel(note.getId());
+        manager.cancel(note.getId());
 
         Toast.makeText(getActivity(), getString(R.string.successful_deleting_note), Toast.LENGTH_SHORT).show();
         updateList(false);
@@ -504,7 +505,7 @@ public class NotesListFragment extends Fragment implements NoteInfoFragment.OnFr
 
     private void editNote(Note note) {
         FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
-        EditNoteFragment fragment = EditNoteFragment.newInstance(EditNoteFragment.ACTION_EDIT, note, EditNoteFragment.FROM_LIST);
+        NoteFragment fragment = NoteFragment.newInstance(NoteFragment.ACTION_EDIT, note, NoteFragment.FROM_LIST);
         fTrans.replace(R.id.container, fragment, "editNoteFragment").addToBackStack("tag");
         fTrans.commit();
     }

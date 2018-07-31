@@ -51,7 +51,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDialogInteractionListener {
+public class NoteFragment extends Fragment implements SetReminderDialog.OnDialogInteractionListener {
     public static final int FROM_LIST = 0;
     public static final int FROM_INFO = 1;
     public static final int ACTION_ADD = 0;
@@ -75,10 +75,10 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     private boolean passwordAlertShowed = false, reminderAlertShowed = false;
     private int from, action;
 
-    public EditNoteFragment() {}
+    public NoteFragment() {}
 
-    public static EditNoteFragment newInstance(int action, Note note, int from) {
-        EditNoteFragment fragment = new EditNoteFragment();
+    public static NoteFragment newInstance(int action, Note note, int from) {
+        NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
 
         args.putInt("action", action);
@@ -89,8 +89,8 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         return fragment;
     }
 
-    public static EditNoteFragment newInstance(int action) {
-        EditNoteFragment fragment = new EditNoteFragment();
+    public static NoteFragment newInstance(int action) {
+        NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
 
         args.putInt("action", action);
@@ -654,7 +654,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
     private void closeFragment() {
         activity.closeKeyboard();
         activity.getSupportFragmentManager().popBackStack();
-        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(EditNoteFragment.this).commit();
+        activity.getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).remove(NoteFragment.this).commit();
     }
 
     private void openEditedNote(boolean needChange) {
@@ -670,7 +670,7 @@ public class EditNoteFragment extends Fragment implements SetReminderDialog.OnDi
         }
 
         FragmentTransaction fTrans = activity.getSupportFragmentManager().beginTransaction();
-        NoteInfoFragment fragment = NoteInfoFragment.newInstance(note);
+        NoteDataFragment fragment = NoteDataFragment.newInstance(note);
         fTrans.replace(R.id.container, fragment, "noteInfoFragment").addToBackStack("tag");
         fTrans.commit();
     }

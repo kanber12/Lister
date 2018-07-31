@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.util.TypedValue;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
@@ -100,7 +103,7 @@ public class Utils {
         return context.getResources().getColor(typedValue.resourceId);
     }
 
-    public static CharSequence getTextForNotif(Context context, String text, boolean isPass) {
+    public static CharSequence getTextForNotif(Context context, String text, String picture, boolean isPass) {
         boolean isHidden = android.preference.PreferenceManager.getDefaultSharedPreferences(context).getBoolean("hidden", false);
 
         if (isHidden || isPass)
@@ -108,8 +111,12 @@ public class Utils {
 
         if (!Utils.isEmpty(text)) {
             return text;
-        } else
-            return context.getText(R.string.no_text);
+        } else {
+            if (picture.equals(""))
+                return context.getText(R.string.no_text);
+            else
+                return context.getText(R.string.picture);
+        }
     }
 
     public static int getLedColor(Context context) {
@@ -213,5 +220,18 @@ public class Utils {
         styledAttributes.recycle();
 
         return toolbarHeight;
+    }
+
+    public static Bitmap getImageBitmap(Context context, String uri) {
+        Bitmap bitmap = null;
+
+        try {
+            if (!uri.equals(""))
+                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(uri));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return bitmap;
     }
 }
