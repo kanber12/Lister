@@ -26,7 +26,7 @@ public class Utils {
     public static final int KEY_ADDED = 1;
     public static final int KEY_NONE = 2;
 
-    private static SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy HH mm", Locale.US);
+    public static SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy HH mm", Locale.US);
 
     private static String timeToString(long time) {
         return format.format(new Date(time));
