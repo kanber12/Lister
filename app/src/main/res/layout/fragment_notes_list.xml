@@ -47,7 +47,7 @@
         android:layout_height="56dp"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_behavior="by.kanber.lister.FABAnimation"
+        app:layout_behavior="by.kanber.lister.util.FABAnimation"
         android:src="@drawable/ic_add_note" />
 
 </android.support.design.widget.CoordinatorLayout>

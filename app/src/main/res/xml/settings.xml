@@ -11,7 +11,7 @@
             android:entries="@array/langs_items"
             android:entryValues="@array/langs_values" />
 
-        <by.kanber.lister.ThemePreference android:key="theme"
+        <by.kanber.lister.preference.ThemePreference android:key="theme"
             android:summary="@string/settings_theme"
             android:defaultValue="0" />
 
@@ -26,11 +26,11 @@
             android:summaryOn="@string/settings_hide_text_on"
             android:summaryOff="@string/settings_hide_text_off" />
 
-        <by.kanber.lister.RingtonePreference android:key="ring"
+        <by.kanber.lister.preference.RingtonePreference android:key="ring"
             android:title="@string/settings_ringtone"
             android:defaultValue="def_ring" />
 
-        <by.kanber.lister.VibrationPreference android:key="vibration"
+        <by.kanber.lister.preference.VibrationPreference android:key="vibration"
             android:defaultValue="0" />
 
         <android.support.v7.preference.ListPreference android:key="led_color"

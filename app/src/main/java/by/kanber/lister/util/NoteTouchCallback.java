@@ -8,7 +8,7 @@ import by.kanber.lister.adapter.NoteTouchHelperAdapter;
 public class NoteTouchCallback extends ItemTouchHelper.Callback {
     private NoteTouchHelperAdapter adapter;
 
-    NoteTouchCallback(NoteTouchHelperAdapter adapter) {
+    public NoteTouchCallback(NoteTouchHelperAdapter adapter) {
         this.adapter = adapter;
     }
 

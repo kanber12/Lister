@@ -30,7 +30,7 @@ public class Note implements Parcelable
         this.picture = picture;
     }
 
-    Note(Note note) {
+    public Note(Note note) {
         id = note.getId();
         show = note.isShow();
         title = note.getTitle();
@@ -43,7 +43,7 @@ public class Note implements Parcelable
         picture = note.getPicture();
     }
 
-    Note() {
+    public Note() {
         index = 0;
         title = "";
         body = "";
