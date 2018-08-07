@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import by.kanber.lister.R;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.model.Note;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> implements NoteTouchHelperAdapter {
     private Context context;

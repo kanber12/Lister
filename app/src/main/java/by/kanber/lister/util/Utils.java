@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.util;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,23 +10,16 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Base64;
-import android.util.Log;
 import android.util.TypedValue;
 
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
+import by.kanber.lister.R;
 
 public class Utils {
     public static final int KEY_REMINDER_SET = 0;

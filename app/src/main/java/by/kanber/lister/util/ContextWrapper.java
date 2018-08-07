@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.util;
 
 import android.content.Context;
 import android.content.res.Configuration;

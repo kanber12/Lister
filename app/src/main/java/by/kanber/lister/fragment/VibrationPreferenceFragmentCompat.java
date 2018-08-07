@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,10 @@ import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.RadioButton;
+
+import by.kanber.lister.R;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.preference.VibrationPreference;
 
 public class VibrationPreferenceFragmentCompat extends PreferenceDialogFragmentCompat {
     private RadioButton btn1, btn2, btn3, btn4, btn5;

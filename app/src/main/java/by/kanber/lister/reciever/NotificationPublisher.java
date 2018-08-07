@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.reciever;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -7,6 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+
+import by.kanber.lister.R;
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.util.Utils;
 
 public class NotificationPublisher extends BroadcastReceiver {
     public static final String NOTE_ID = "note_id";

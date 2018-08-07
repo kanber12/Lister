@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 
 import android.Manifest;
@@ -15,6 +15,14 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceGroup;
 import android.util.Log;
+
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.R;
+import by.kanber.lister.preference.RingtonePreference;
+import by.kanber.lister.activity.SettingsActivity;
+import by.kanber.lister.preference.ThemePreference;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.preference.VibrationPreference;
 
 import static android.app.Activity.RESULT_OK;
 

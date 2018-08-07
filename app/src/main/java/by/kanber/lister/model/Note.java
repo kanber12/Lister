@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -8,6 +8,8 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+import by.kanber.lister.database.DBHelper;
 
 public class Note implements Parcelable
 {

@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 import android.support.v7.app.AlertDialog;
 import android.support.annotation.NonNull;
@@ -29,6 +29,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.ObjectKey;
+
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.R;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.model.Note;
 
 
 public class NoteDataFragment extends Fragment {

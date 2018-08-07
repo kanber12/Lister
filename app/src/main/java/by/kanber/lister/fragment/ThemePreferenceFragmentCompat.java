@@ -1,10 +1,13 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 import android.os.Bundle;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.ImageView;
+
+import by.kanber.lister.R;
+import by.kanber.lister.preference.ThemePreference;
 
 public class ThemePreferenceFragmentCompat extends PreferenceDialogFragmentCompat {
     private ImageView img1, img2, img3, img4, img5, img6, img7, img8;

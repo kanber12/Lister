@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -1,9 +1,11 @@
-package by.kanber.lister;
+package by.kanber.lister.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
+
+import by.kanber.lister.R;
 
 public class ThemePreference extends DialogPreference {
     private int selectedTheme;

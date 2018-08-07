@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.util;
 
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
@@ -6,6 +6,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
+
+import by.kanber.lister.util.Utils;
 
 public class FABAnimation extends CoordinatorLayout.Behavior<FloatingActionButton> {
     private int toolbarHeight;

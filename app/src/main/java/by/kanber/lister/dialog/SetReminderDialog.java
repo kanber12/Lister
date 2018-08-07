@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.dialog;
 
 import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.R;
 
 
 public class SetReminderDialog extends DialogFragment {

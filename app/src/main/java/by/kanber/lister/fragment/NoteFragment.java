@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 import android.Manifest;
 import android.app.Activity;
@@ -49,6 +49,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.R;
+import by.kanber.lister.dialog.SetReminderDialog;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.model.Note;
 
 
 public class NoteFragment extends Fragment implements SetReminderDialog.OnDialogInteractionListener {

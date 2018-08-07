@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.fragment;
 
 import android.app.AlarmManager;
 import android.support.v4.app.NotificationManagerCompat;
@@ -37,6 +37,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+
+import by.kanber.lister.activity.MainActivity;
+import by.kanber.lister.util.NoteTouchCallback;
+import by.kanber.lister.adapter.NotesAdapter;
+import by.kanber.lister.reciever.NotificationPublisher;
+import by.kanber.lister.R;
+import by.kanber.lister.dialog.SetReminderDialog;
+import by.kanber.lister.activity.SettingsActivity;
+import by.kanber.lister.util.Utils;
+import by.kanber.lister.database.DBHelper;
+import by.kanber.lister.model.Note;
 
 
 public class NotesListFragment extends Fragment implements NoteDataFragment.OnFragmentInteractionListener, NoteFragment.OnFragmentInteractionListener, SetReminderDialog.OnDialogInteractionListener {

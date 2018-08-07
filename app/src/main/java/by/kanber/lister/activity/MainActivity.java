@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.activity;
 
 import android.app.NotificationManager;
 import android.support.annotation.NonNull;
@@ -14,6 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Locale;
+
+import by.kanber.lister.R;
+import by.kanber.lister.database.DBHelper;
+import by.kanber.lister.fragment.NoteFragment;
+import by.kanber.lister.fragment.NotesListFragment;
+import by.kanber.lister.util.ContextWrapper;
+import by.kanber.lister.util.Utils;
 
 
 public class MainActivity extends AppCompatActivity {

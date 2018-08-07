@@ -1,7 +1,9 @@
-package by.kanber.lister;
+package by.kanber.lister.util;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+
+import by.kanber.lister.adapter.NoteTouchHelperAdapter;
 
 public class NoteTouchCallback extends ItemTouchHelper.Callback {
     private NoteTouchHelperAdapter adapter;

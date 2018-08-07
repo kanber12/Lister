@@ -1,4 +1,4 @@
-package by.kanber.lister;
+package by.kanber.lister.activity;
 
 import android.content.Context;
 import android.support.v4.app.FragmentTransaction;
@@ -9,6 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.Locale;
+
+import by.kanber.lister.R;
+import by.kanber.lister.fragment.SettingsFragment;
+import by.kanber.lister.util.ContextWrapper;
+import by.kanber.lister.util.Utils;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override
