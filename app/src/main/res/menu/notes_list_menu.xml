@@ -2,18 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group android:id="@+id/list_group">
-
-        <item android:id="@+id/action_settings"
-            android:title="@string/action_settings"
-            app:showAsAction="never" />
-
-    </group>
-
     <item android:id="@+id/action_search"
         android:title="@string/action_search"
         android:icon="@drawable/ic_toolbar_search"
         app:showAsAction="collapseActionView|always"
         app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_action_settings" />
 
 </menu>

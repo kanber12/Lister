@@ -210,7 +210,7 @@ public class NotesListFragment extends Fragment implements NoteDataFragment.OnFr
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                menu.setGroupVisible(R.id.list_group, false);
+                menu.findItem(R.id.action_settings).setVisible(false);
                 fab.hide();
                 findNotes("");
 
@@ -219,7 +219,7 @@ public class NotesListFragment extends Fragment implements NoteDataFragment.OnFr
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                menu.setGroupVisible(R.id.list_group, true);
+                menu.findItem(R.id.action_settings).setVisible(true);
                 fab.show();
                 updateList(false);
 
